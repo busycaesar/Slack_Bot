@@ -8,12 +8,12 @@ default: &default
 
 development:
   <<: *default
-  database: slack-bot_development
+  database: <%= ENV.fetch("POSTGRES_DB_DEV") %>
 
 test:
   <<: *default
-  database: slack-bot_test
+  database: <%= ENV.fetch("POSTGRES_DB_TEST") %>
 
 production:
   <<: *default
-  database: slack-bot_production
+  database: <%= ENV.fetch("POSTGRES_DB") %>
