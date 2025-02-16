@@ -7,7 +7,7 @@ class SlackController < ApplicationController
 
     # Get the token from the env variables.
     SLACK_BOT_TOKEN = ENV["SLACK_BOT_TOKEN"]
-
+    
     def index
         # Get the text from the request body.
         text = params[:text]
@@ -92,12 +92,7 @@ class SlackController < ApplicationController
     end
 
     def list_view
-        @incidents = Incident.order(name: params[:sort] == "desc" ? :desc : :asc)
-  
-        respond_to do |format|
-            format.html
-            format.turbo_stream
-        end
+        @incidents = Incident.order(created_at: :desc)
     end
 
     private
