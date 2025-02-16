@@ -91,6 +91,15 @@ class SlackController < ApplicationController
         end
     end
 
+    def list_view
+        @incidents = Incident.order(name: params[:sort] == "desc" ? :desc : :asc)
+  
+        respond_to do |format|
+            format.html
+            format.turbo_stream
+        end
+    end
+
     private
 
     def open_modal(trigger_id, title)

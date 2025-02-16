@@ -1,0 +1,30 @@
+<html>
+<body>
+<h1>Incident List</h1>
+
+<table>
+<thead>
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Severity</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Resolved At</th>
+    </tr>
+</thead>
+<tbody>
+    <% @incidents.each do |incident| %>
+        <tr>
+            <td><%= incident.title %></td>
+            <td><%= incident.description.presence || "N/A" %></td>
+            <td><%= incident.severity.presence || "N/A" %></td>
+            <td><%= incident.resolve ? "Resolved" : "Open" %></td>
+            <td><%= incident.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+            <td><%= incident.resolved_at&.strftime("%Y-%m-%d %H:%M") || "N/A" %></td>
+        </tr>
+    <% end %>
+</tbody>
+</table>
+</body>
+</html>
