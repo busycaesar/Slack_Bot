@@ -92,8 +92,17 @@ class SlackController < ApplicationController
     end
 
     def list_view
-        @incidents = Incident.order(created_at: :desc)
-    end
+        # Choose the order to sort the incidents.
+        sort_order = params[:sort] == "desc" ? :desc : :asc
+
+        # Get the incidents from the database in the choosen order.
+        @incidents = Incident.order(title: sort_order)
+      
+        respond_to do |format|
+          format.html
+          format.turbo_stream
+        end
+      end      
 
     private
 

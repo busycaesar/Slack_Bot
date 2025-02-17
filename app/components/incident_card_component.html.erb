@@ -1,0 +1,15 @@
+<!-- app/components/incident_card_component.html.erb -->
+<div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+  <h2 class="text-xl font-semibold text-gray-800"><%= @incident.title.titleize %></h2>
+  <p class="text-gray-600"><%= @incident.description.presence || "No description provided" %></p>
+  <p class="mt-2 text-sm text-gray-500">Severity: <span class="font-medium"><%= @incident.severity.presence || "N/A" %></span></p>
+  <p class="text-sm text-gray-500">Status: 
+    <span class="font-semibold <%= @incident.resolve ? 'text-green-600' : 'text-red-600' %>">
+      <%= @incident.resolve ? "Resolved" : "Open" %>
+    </span>
+  </p>
+  <p class="text-xs text-gray-400">Created At: <%= @incident.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+  <% if @incident.resolved_at %>
+    <p class="text-xs text-gray-400">Resolved At: <%= @incident.resolved_at.strftime("%Y-%m-%d %H:%M") %></p>
+  <% end %>
+</div>

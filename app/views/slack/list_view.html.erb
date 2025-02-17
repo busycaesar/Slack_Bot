@@ -1,30 +1,17 @@
-<html>
-<body>
-<h1>Incident List</h1>
+<% content_for(:title, "Incident List") %>
 
-<table>
-<thead>
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Severity</th>
-        <th>Status</th>
-        <th>Created At</th>
-        <th>Resolved At</th>
-    </tr>
-</thead>
-<tbody>
+<%= turbo_frame_tag "incidents" do %>
+    <div class="flex justify-between items-center mb-6 px-6 py-4 bg-gray-200 rounded-lg shadow-lg">
+    <h1 class="text-4xl font-extrabold text-gray-800">Incident List</h1>
+    <div class="flex space-x-4">
+      <%= link_to "Sort ASC", slack_incident_list_path(sort: "asc"), data: { turbo_frame: "incidents" }, class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-300 ease-in-out" %>
+      <%= link_to "Sort DESC", slack_incident_list_path(sort: "desc"), data: { turbo_frame: "incidents" }, class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-300 ease-in-out" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6 py-4">
     <% @incidents.each do |incident| %>
-        <tr>
-            <td><%= incident.title %></td>
-            <td><%= incident.description.presence || "N/A" %></td>
-            <td><%= incident.severity.presence || "N/A" %></td>
-            <td><%= incident.resolve ? "Resolved" : "Open" %></td>
-            <td><%= incident.created_at.strftime("%Y-%m-%d %H:%M") %></td>
-            <td><%= incident.resolved_at&.strftime("%Y-%m-%d %H:%M") || "N/A" %></td>
-        </tr>
+      <%= render IncidentCardComponent.new(incident: incident) %>
     <% end %>
-</tbody>
-</table>
-</body>
-</html>
+  </div>
+<% end %>

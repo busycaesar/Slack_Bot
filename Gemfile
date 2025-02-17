@@ -65,3 +65,5 @@ end
 gem "dotenv-rails", "~> 3.1"
 
 gem 'view_component'
+
+gem "tailwindcss-rails"
