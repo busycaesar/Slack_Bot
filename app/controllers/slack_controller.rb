@@ -33,9 +33,10 @@ class SlackController < ApplicationController
             end
 
             # Open the modal to declare a new incident.
-            open_modal(trigger_id, title)
+            response = open_modal(trigger_id, title)
 
-            render plain: "The incident is added. Please browse the channel \"#{title}\" and join it.", status: 201
+            render plain: response, status: 201
+            
             return
         end
 
@@ -83,9 +84,12 @@ class SlackController < ApplicationController
 
         # Respond with the necessary JSON response
         if incident.persisted?
-            create_channel(title)
-
-            render json: { response_action: "clear" }, status: 200
+            begin
+                create_channel(title)
+                render json: { response_action: "clear" }, status: 201
+            rescue => e
+                render json: { response_action: "errors", errors: e.message }, status: 400    
+            end
         else
             render json: { response_action: "errors", errors: incident.errors.full_messages }, status: 400
         end
@@ -210,9 +214,15 @@ class SlackController < ApplicationController
             ]
           }
         }.to_json
-      
+
         # Make the request while passing the request
-        http.request(request)
+        response = http.request(request)
+
+        if response.code == '200'
+            return "The incident is added. Please browse the channel \"#{title}\" and join it."
+        else
+            return "Failed to open the modal."
+        end
     end
 
     # Method to create a new Slack channel
@@ -234,7 +244,13 @@ class SlackController < ApplicationController
         }.to_json
   
         # Make the request
-        http.request(request)
+        response = http.request(request)
+
+        puts response.code
+
+        if response.code != '200'
+            raise "Failed to open the modal."
+        end
     end
 
     def resolve_incident(channel_name)
@@ -245,13 +261,18 @@ class SlackController < ApplicationController
             return "please use this command from the dedicated incident channel."
         end
 
-        # Mark the incident as resolved along with the time stamp.
-        incident.update(resolve: true, resolved_at: Time.current)
-
-        # Calculate the time taken to resolve the incident.
-        time_taken = Time.current - incident.created_at
-
-        # Return the time taken.
-        return "The incident is resolved. Time Taken: #{time_taken}."
+        begin
+            # Mark the incident as resolved along with the time stamp.
+            incident.update(resolve: true, resolved_at: Time.current)
+                
+            # Calculate the time taken to resolve the incident.
+            time_taken = Time.current - incident.created_at
+    
+            # Return the time taken.
+            return "The incident is resolved. Time Taken: #{time_taken}."
+        rescue StandardError => e
+            # Handle unexpected errors
+            return "Error occured while resolving the incident."
+        end
     end
 end
