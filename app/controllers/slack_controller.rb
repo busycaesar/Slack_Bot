@@ -264,9 +264,17 @@ class SlackController < ApplicationController
         begin
             # Mark the incident as resolved along with the time stamp.
             incident.update(resolve: true, resolved_at: Time.current)
-                
+
             # Calculate the time taken to resolve the incident.
-            time_taken = Time.current - incident.created_at
+            time_taken_in_seconds = (Time.current - incident.created_at).to_f
+
+            # Convert time taken to hours, minutes, and seconds
+            hours = (time_taken_in_seconds / 3600).to_i
+            minutes = ((time_taken_in_seconds % 3600) / 60).to_i
+            seconds = (time_taken_in_seconds % 60).to_i
+
+            # Format the time string with two digits after the decimal
+            time_taken = "#{hours} hours, #{minutes} minutes, #{seconds} seconds"
     
             # Return the time taken.
             return "The incident is resolved. Time Taken: #{time_taken}."
