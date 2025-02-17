@@ -246,8 +246,6 @@ class SlackController < ApplicationController
         # Make the request
         response = http.request(request)
 
-        puts response.code
-
         if response.code != '200'
             raise "Failed to open the modal."
         end
@@ -259,6 +257,10 @@ class SlackController < ApplicationController
 
         if incident.nil?
             return "please use this command from the dedicated incident channel."
+        end
+
+        if incident.resolve
+            return "the incident is already resolved at #{incident.resolved_at}"
         end
 
         begin
